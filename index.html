@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>משולש שווה שוקיים - כיתה ח</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&family=Frank+Ruhl+Libre:wght@400;700;900&display=swap');
+  :root {
+    --bg:#0f1117;--surface:#1a1d27;--surface2:#22263a;
+    --accent:#6c8ef5;--accent2:#f5a623;--accent3:#4ecdc4;
+    --text:#e8eaf0;--text-muted:#8890a8;
+    --success:#4ade80;--error:#f87171;--border:rgba(108,142,245,0.2);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;direction:rtl;}
+  nav{background:var(--surface);border-bottom:1px solid var(--border);padding:0 2rem;position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;height:60px;}
+  .nav-title{font-family:'Frank Ruhl Libre',serif;font-size:1.2rem;font-weight:700;color:var(--accent);}
+  .nav-tabs{display:flex;gap:0.25rem;}
+  .nav-tab{padding:0.4rem 0.9rem;border-radius:6px;border:none;background:transparent;color:var(--text-muted);cursor:pointer;font-family:'Heebo',sans-serif;font-size:0.85rem;transition:all 0.2s;}
+  .nav-tab:hover{background:var(--surface2);color:var(--text);}
+  .nav-tab.active{background:var(--accent);color:#fff;}
+  .section{display:none;padding:2rem;max-width:900px;margin:0 auto;}
+  .section.active{display:block;animation:fadeIn 0.3s ease;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  .hero{text-align:center;padding:3rem 0 2rem;}
+  .hero h1{font-family:'Frank Ruhl Libre',serif;font-size:3rem;font-weight:900;background:linear-gradient(135deg,var(--accent),var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:0.5rem;}
+  .hero p{color:var(--text-muted);font-size:1.1rem;}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:1.5rem;margin-bottom:1.5rem;}
+  .card-title{font-family:'Frank Ruhl Libre',serif;font-size:1.3rem;font-weight:700;color:var(--accent);margin-bottom:1rem;display:flex;align-items:center;gap:0.5rem;}
+  p,li{line-height:1.8;color:var(--text);}
+  ul{padding-right:1.2rem;}
+  li{margin-bottom:0.4rem;}
+  .highlight{background:rgba(108,142,245,0.1);border-right:4px solid var(--accent);border-radius:0 10px 10px 0;padding:1rem 1.2rem;margin:1rem 0;}
+  .highlight.green{background:rgba(78,205,196,0.1);border-right-color:var(--accent3);}
+  .highlight.orange{background:rgba(245,166,35,0.1);border-right-color:var(--accent2);}
+  .tri-wrap{display:flex;justify-content:center;margin:1.5rem 0;}
+  svg{overflow:visible;}
+  .prop-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0;}
+  .prop-box{background:var(--surface2);border-radius:12px;padding:1rem;border:1px solid var(--border);text-align:center;}
+  .prop-box .num{font-size:2rem;font-weight:900;color:var(--accent);font-family:'Frank Ruhl Libre',serif;}
+  .prop-box .label{font-size:0.85rem;color:var(--text-muted);margin-top:0.2rem;}
+  .summary-table{width:100%;border-collapse:collapse;margin:1rem 0;}
+  .summary-table th{background:var(--accent);color:#fff;padding:0.6rem 1rem;text-align:right;font-size:0.9rem;}
+  .summary-table td{padding:0.6rem 1rem;border-bottom:1px solid var(--border);font-size:0.9rem;}
+  .summary-table tr:nth-child(even) td{background:var(--surface2);}
+  .formula{display:inline-block;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:0.4rem 1rem;font-family:'Frank Ruhl Libre',serif;font-size:1.05rem;color:var(--accent2);margin:0.3rem 0;}
+  .quiz-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:1.5rem;margin-bottom:1.5rem;}
+  .qnum{display:inline-block;background:var(--accent);color:#fff;width:28px;height:28px;border-radius:50%;text-align:center;line-height:28px;font-size:0.85rem;font-weight:700;margin-left:0.5rem;}
+  .qtext{font-size:1rem;font-weight:500;margin-bottom:1rem;line-height:1.7;}
+  .qsvg{display:flex;justify-content:center;margin:1rem 0;}
+  .arow{display:flex;gap:0.8rem;align-items:center;flex-wrap:wrap;margin-bottom:0.8rem;}
+  .arow label{font-size:0.9rem;color:var(--text-muted);}
+  .ainput{background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;padding:0.45rem 0.8rem;color:var(--text);font-family:'Heebo',sans-serif;font-size:1rem;width:90px;transition:border-color 0.2s;}
+  .ainput:focus{outline:none;border-color:var(--accent);}
+  .ainput.ok{border-color:var(--success);background:rgba(74,222,128,0.08);}
+  .ainput.no{border-color:var(--error);background:rgba(248,113,113,0.08);}
+  .cbtn{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:0.45rem 1.2rem;font-family:'Heebo',sans-serif;font-size:0.9rem;cursor:pointer;transition:opacity 0.2s;}
+  .cbtn:hover{opacity:0.85;}
+  .fb{margin-top:0.8rem;padding:0.7rem 1rem;border-radius:8px;font-size:0.9rem;display:none;}
+  .fb.show{display:block;}
+  .fb.ok{background:rgba(74,222,128,0.12);color:var(--success);border:1px solid rgba(74,222,128,0.3);}
+  .fb.no{background:rgba(248,113,113,0.12);color:var(--error);border:1px solid rgba(248,113,113,0.3);}
+  .pstep{display:flex;gap:1rem;margin-bottom:1rem;align-items:flex-start;}
+  .pnum{flex-shrink:0;width:28px;height:28px;background:var(--accent2);color:#000;border-radius:50%;text-align:center;line-height:28px;font-size:0.8rem;font-weight:700;}
+  .pcont{flex:1;}
+  .thbox{background:var(--surface2);border-radius:12px;padding:1.2rem;margin:0.8rem 0;border:1px solid var(--border);}
+  .thbox h4{color:var(--accent3);margin-bottom:0.6rem;font-size:1rem;}
+  .slist{counter-reset:s;}
+  .slist li{counter-increment:s;list-style:none;padding-right:2.2rem;position:relative;margin-bottom:0.8rem;}
+  .slist li::before{content:counter(s);position:absolute;right:0;top:2px;width:22px;height:22px;background:var(--accent);color:#fff;border-radius:50%;text-align:center;font-size:0.75rem;line-height:22px;font-weight:700;}
+  .pfill{background:var(--surface2);border:1.5px dashed var(--border);border-radius:6px;padding:0.3rem 0.7rem;color:var(--text);font-family:'Heebo',sans-serif;font-size:0.95rem;width:180px;text-align:center;transition:border-color 0.2s;}
+  .pfill:focus{outline:none;border-color:var(--accent);}
+  .pfill.ok{border-color:var(--success);background:rgba(74,222,128,0.08);}
+  .pfill.no{border-color:var(--error);background:rgba(248,113,113,0.08);}
+  .scorebar{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1rem 1.5rem;display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;}
+  .slabel{color:var(--text-muted);font-size:0.9rem;}
+  .sval{font-size:1.5rem;font-weight:700;color:var(--accent);font-family:'Frank Ruhl Libre',serif;}
+  .badge{display:inline-block;padding:0.2rem 0.7rem;border-radius:20px;font-size:0.75rem;font-weight:600;margin-bottom:0.5rem;}
+  .bb{background:rgba(108,142,245,0.2);color:var(--accent);}
+  .bt{background:rgba(78,205,196,0.2);color:var(--accent3);}
+  .bo{background:rgba(245,166,35,0.2);color:var(--accent2);}
+  @media(max-width:600px){
+    .prop-grid{grid-template-columns:1fr;}
+    nav{flex-direction:column;height:auto;padding:0.5rem;gap:0.3rem;}
+    .nav-tabs{flex-wrap:wrap;justify-content:center;}
+    .hero h1{font-size:2rem;}
+    .section{padding:1rem;}
+  }
+</style>
+</head>
+<body>
+<nav>
+  <span class="nav-title">&#x1F4D0; משולש שווה שוקיים</span>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="go('learn')">&#x1F4D6; לימוד</button>
+    <button class="nav-tab" onclick="go('summary')">&#x1F4CB; סיכום</button>
+    <button class="nav-tab" onclick="go('calc')">&#x1F522; חישוב</button>
+    <button class="nav-tab" onclick="go('proof')">&#x270F;&#xFE0F; הוכחה</button>
+  </div>
+</nav>
+
+<!-- ========== LEARN ========== -->
+<div id="learn" class="section active">
+  <div class="hero">
+    <h1>משולש שווה שוקיים</h1>
+    <p>כיתה ח&#x2019; &#xB7; גאומטריה &#xB7; מדריך מלא</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">&#x1F4D0; הגדרה</div>
+    <p><strong>משולש שווה שוקיים</strong> הוא משולש שבו שתי צלעות שוות זו לזו.</p>
+    <div class="highlight">
+      הצלעות השוות נקראות <strong style="color:var(--accent)">שוקיים</strong>, והצלע השלישית נקראת <strong style="color:var(--accent2)">בסיס</strong>.
+    </div>
+    <div class="tri-wrap">
+      <svg width="300" height="240" viewBox="0 0 300 240">
+        <polygon points="150,28 40,205 260,205" fill="rgba(108,142,245,0.08)"/>
+        <line x1="150" y1="28" x2="40" y2="205" stroke="#6c8ef5" stroke-width="3.5"/>
+        <line x1="150" y1="28" x2="260" y2="205" stroke="#6c8ef5" stroke-width="3.5"/>
+        <line x1="40" y1="205" x2="260" y2="205" stroke="#f5a623" stroke-width="3.5"/>
+        <g transform="translate(95,117) rotate(-61)"><line x1="-6" y1="0" x2="6" y2="0" stroke="#6c8ef5" stroke-width="2.5"/><line x1="-3" y1="-5" x2="3" y2="-5" stroke="#6c8ef5" stroke-width="2.5"/></g>
+        <g transform="translate(205,117) rotate(61)"><line x1="-6" y1="0" x2="6" y2="0" stroke="#6c8ef5" stroke-width="2.5"/><line x1="-3" y1="-5" x2="3" y2="-5" stroke="#6c8ef5" stroke-width="2.5"/></g>
+        <text x="150" y="18" text-anchor="middle" fill="#e8eaf0" font-family="Heebo" font-size="16" font-weight="700">A</text>
+        <text x="25" y="222" fill="#e8eaf0" font-family="Heebo" font-size="16" font-weight="700">B</text>
+        <text x="263" y="222" fill="#e8eaf0" font-family="Heebo" font-size="16" font-weight="700">C</text>
+        <text x="72" y="115" fill="#6c8ef5" font-family="Heebo" font-size="14" font-weight="600">שוק AB</text>
+        <text x="198" y="115" fill="#6c8ef5" font-family="Heebo" font-size="14" font-weight="600">שוק AC</text>
+        <text x="150" y="223" text-anchor="middle" fill="#f5a623" font-family="Heebo" font-size="14" font-weight="600">בסיס BC</text>
+        <!-- base angle arcs -->
+        <path d="M 59.0,205.0 A 19,19 0 0,1 50.0,188.9" fill="none" stroke="#4ecdc4" stroke-width="2.2"/>
+        <path d="M 241.0,205.0 A 19,19 0 0,0 250.0,188.9" fill="none" stroke="#4ecdc4" stroke-width="2.2"/>
+        <text x="40" y="183" fill="#4ecdc4" font-family="Heebo" font-size="13">זו&#x2019; B</text>
+        <text x="224" y="183" fill="#4ecdc4" font-family="Heebo" font-size="13">זו&#x2019; C</text>
+        <!-- apex arc -->
+        <path d="M 138,46" fill="none" stroke="#f5a623" stroke-width="2"/>
+        <path d="M 136,46 A 20,20 0 0,1 164,46" fill="none" stroke="#f5a623" stroke-width="2"/>
+        <text x="138" y="65" fill="#f5a623" font-family="Heebo" font-size="13">זו&#x2019; A</text>
+      </svg>
+    </div>
+    <div class="highlight green">
+      <strong style="color:var(--accent3)">סימון:</strong> AB = AC (שוקיים שוות). BC הוא הבסיס.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">&#x2B50; תכונות משולש שווה שוקיים</div>
+    <div class="prop-grid">
+      <div class="prop-box"><div class="num">1</div><div class="label">זוויות הבסיס שוות<br>זווית B = זווית C</div></div>
+      <div class="prop-box"><div class="num">2</div><div class="label">השוקיים שוות<br>AB = AC</div></div>
+      <div class="prop-box"><div class="num">3</div><div class="label">ציר הסימטריה עובר דרך קודקוד הראש A</div></div>
+      <div class="prop-box"><div class="num">4</div><div class="label">תיכון לבסיס = גובה לבסיס = חוצה זווית הראש</div></div>
+    </div>
+    <div class="highlight orange">
+      &#x1F4A1; <strong>תכונה חשובה:</strong> אם שתי הצלעות שוות אז שתי הזוויות מולן שוות, ולהפך.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">&#x1F4CF; זוויות הבסיס שוות</div>
+    <p>ב-משולש ABC כאשר AB = AC:</p>
+    <div class="highlight">
+      <span class="formula">זווית B = זווית C</span><br><br>
+      זוויות הבסיס שוות תמיד!
+    </div>
+    <p style="margin-top:0.8rem">נוסחאות חישוב:</p>
+    <ul>
+      <li>סכום זוויות במשולש = 180&deg;</li>
+      <li>אם זווית A = &#x3B1;: &nbsp;<span class="formula">זווית B = זווית C = (180&deg; &#x2212; &#x3B1;) &divide; 2</span></li>
+      <li>אם זווית B = &#x3B2;: &nbsp;<span class="formula">זווית A = 180&deg; &#x2212; 2&#x3B2;</span></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">&#x1F500; התלכדות שלושה קווים</div>
+    <p>הקו היורד מ-A (קודקוד הראש) אל BC הוא בו-זמנית:</p>
+    <div class="thbox"><h4>&#x1F4CC; תיכון לבסיס</h4><p>הקו מחלק את BC לשני חלקים שווים: BM = MC</p></div>
+    <div class="thbox"><h4>&#x1F4CC; גובה לבסיס</h4><p>הקו ניצב לבסיס BC (עושה זווית 90&deg;)</p></div>
+    <div class="thbox"><h4>&#x1F4CC; חוצה זווית הראש</h4><p>הקו חוצה את זווית A לשניים: זווית BAM = זווית CAM</p></div>
+    <div class="tri-wrap">
+      <svg width="300" height="230" viewBox="0 0 300 230">
+        <polygon points="150,22 40,205 260,205" fill="rgba(108,142,245,0.07)"/>
+        <line x1="150" y1="22" x2="40" y2="205" stroke="#6c8ef5" stroke-width="3"/>
+        <line x1="150" y1="22" x2="260" y2="205" stroke="#6c8ef5" stroke-width="3"/>
+        <line x1="40" y1="205" x2="260" y2="205" stroke="#f5a623" stroke-width="3"/>
+        <line x1="150" y1="22" x2="150" y2="205" stroke="#4ecdc4" stroke-width="2.5" stroke-dasharray="6,3"/>
+        <rect x="138" y="193" width="12" height="12" fill="none" stroke="#4ecdc4" stroke-width="2"/>
+        <circle cx="150" cy="205" r="4" fill="#4ecdc4"/>
+        <g transform="translate(95,113) rotate(-61)"><line x1="-6" y1="0" x2="6" y2="0" stroke="#6c8ef5" stroke-width="2.2"/><line x1="-3" y1="-5" x2="3" y2="-5" stroke="#6c8ef5" stroke-width="2.2"/></g>
+        <g transform="translate(205,113) rotate(61)"><line x1="-6" y1="0" x2="6" y2="0" stroke="#6c8ef5" stroke-width="2.2"/><line x1="-3" y1="-5" x2="3" y2="-5" stroke="#6c8ef5" stroke-width="2.2"/></g>
+        <path d="M 136,40 A 18,18 0 0,1 150,47" fill="none" stroke="#f5a623" stroke-width="2"/>
+        <path d="M 150,47 A 18,18 0 0,1 164,40" fill="none" stroke="#f5a623" stroke-width="2"/>
+        <line x1="92" y1="205" x2="92" y2="198" stroke="#f5a623" stroke-width="2.5"/>
+        <line x1="208" y1="205" x2="208" y2="198" stroke="#f5a623" stroke-width="2.5"/>
+        <text x="150" y="14" text-anchor="middle" fill="#e8eaf0" font-family="Heebo" font-size="15" font-weight="700">A</text>
+        <text x="25" y="220" fill="#e8eaf0" font-family="Heebo" font-size="15" font-weight="700">B</text>
+        <text x="263" y="220" fill="#e8eaf0" font-family="Heebo" font-size="15" font-weight="700">C</text>
+        <text x="150" y="220" text-anchor="middle" fill="#4ecdc4" font-family="Heebo" font-size="13" font-weight="700">M</text>
+        <text x="162" y="110" fill="#4ecdc4" font-family="Heebo" font-size="13">AM = גובה</text>
+        <text x="162" y="128" fill="#4ecdc4" font-family="Heebo" font-size="13">= תיכון</text>
+        <text x="162" y="146" fill="#4ecdc4" font-family="Heebo" font-size="13">= חוצה זווית</text>
+      </svg>
+    </div>
+    <div class="highlight green"><strong>סיכום:</strong> AM הוא גם גובה, גם תיכון, וגם חוצה זווית הראש &#x2014; כולם אותו קו!</div>
+  </div>
+</div>
+
+<!-- ========== SUMMARY ========== -->
+<div id="summary" class="section">
+  <div class="hero"><h1 style="font-size:2.2rem">דף סיכום</h1><p>כל מה שצריך לדעת &#x2014; בדף אחד</p></div>
+
+  <div class="card">
+    <div class="tri-wrap">
+      <svg width="340" height="280" viewBox="0 0 340 280">
+        <!-- filled triangle -->
+        <polygon points="170,22 38,242 302,242" fill="rgba(108,142,245,0.07)"/>
+        <!-- legs (blue) -->
+        <line x1="170" y1="22" x2="38" y2="242" stroke="#6c8ef5" stroke-width="3"/>
+        <line x1="170" y1="22" x2="302" y2="242" stroke="#6c8ef5" stroke-width="3"/>
+        <!-- base (orange) -->
+        <line x1="38" y1="242" x2="302" y2="242" stroke="#f5a623" stroke-width="3"/>
+        <!-- equal leg tick marks -->
+        <g transform="translate(104,132) rotate(-61)">
+          <line x1="-7" y1="0" x2="7" y2="0" stroke="#6c8ef5" stroke-width="2.5"/>
+          <line x1="-4" y1="-5" x2="4" y2="-5" stroke="#6c8ef5" stroke-width="2.5"/>
+        </g>
+        <g transform="translate(236,132) rotate(61)">
+          <line x1="-7" y1="0" x2="7" y2="0" stroke="#6c8ef5" stroke-width="2.5"/>
+          <line x1="-4" y1="-5" x2="4" y2="-5" stroke="#6c8ef5" stroke-width="2.5"/>
+        </g>
+        <!-- AM line: median = height = angle bisector (teal dashed) -->
+        <line x1="170" y1="22" x2="170" y2="242" stroke="#4ecdc4" stroke-width="2.5" stroke-dasharray="7,4"/>
+        <!-- right angle mark at M -->
+        <rect x="158" y="230" width="12" height="12" fill="none" stroke="#4ecdc4" stroke-width="2"/>
+        <!-- M point -->
+        <circle cx="170" cy="242" r="4.5" fill="#4ecdc4"/>
+        <!-- equal halves tick marks on base -->
+        <line x1="100" y1="242" x2="100" y2="234" stroke="#f5a623" stroke-width="2.5"/>
+        <line x1="240" y1="242" x2="240" y2="234" stroke="#f5a623" stroke-width="2.5"/>
+        <!-- bisector angle marks at apex A -->
+        <path d="M 156,40 A 19,19 0 0,1 170,47" fill="none" stroke="#f5a623" stroke-width="2"/>
+        <path d="M 170,47 A 19,19 0 0,1 184,40" fill="none" stroke="#f5a623" stroke-width="2"/>
+        <!-- base angle arcs -->
+        <path d="M 56.2,242.0 A 19,19 0 0,1 47.9,224.8" fill="none" stroke="#4ecdc4" stroke-width="2"/>
+        <path d="M 283.8,242.0 A 19,19 0 0,0 292.1,224.8" fill="none" stroke="#4ecdc4" stroke-width="2"/>
+        <!-- vertex labels -->
+        <text x="170" y="13" text-anchor="middle" fill="#e8eaf0" font-family="Heebo" font-size="17" font-weight="700">A</text>
+        <text x="22" y="260" fill="#e8eaf0" font-family="Heebo" font-size="17" font-weight="700">B</text>
+        <text x="306" y="260" fill="#e8eaf0" font-family="Heebo" font-size="17" font-weight="700">C</text>
+        <text x="170" y="264" text-anchor="middle" fill="#4ecdc4" font-family="Heebo" font-size="15" font-weight="700">M</text>
+        <!-- AM label with three roles -->
+        <text x="182" y="100" fill="#4ecdc4" font-family="Heebo" font-size="13" font-weight="600">AM:</text>
+        <text x="182" y="118" fill="#4ecdc4" font-family="Heebo" font-size="12">גובה לבסיס</text>
+        <text x="182" y="135" fill="#4ecdc4" font-family="Heebo" font-size="12">תיכון לבסיס</text>
+        <text x="182" y="152" fill="#4ecdc4" font-family="Heebo" font-size="12">חוצה זווית A</text>
+        <!-- side labels -->
+        <text x="85" y="135" fill="#6c8ef5" font-family="Heebo" font-size="14" font-weight="600">a</text>
+        <text x="248" y="135" fill="#6c8ef5" font-family="Heebo" font-size="14" font-weight="600">a</text>
+        <text x="170" y="272" text-anchor="middle" fill="#f5a623" font-family="Heebo" font-size="14" font-weight="600">b</text>
+        <!-- base angle labels -->
+        <text x="30" y="222" fill="#4ecdc4" font-family="Heebo" font-size="12">זו&#x2019; B</text>
+        <text x="284" y="222" fill="#4ecdc4" font-family="Heebo" font-size="12">זו&#x2019; C</text>
+        <text x="165" y="62" fill="#f5a623" font-family="Heebo" font-size="12">זו&#x2019; A</text>
+      </svg>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">&#x1F4CB; טבלת תכונות</div>
+    <table class="summary-table">
+      <tr><th>תכונה</th><th>סימון / נוסחה</th></tr>
+      <tr><td>שוקיים שוות</td><td style="color:var(--accent)">AB = AC</td></tr>
+      <tr><td>זוויות בסיס שוות</td><td style="color:var(--accent3)">זווית B = זווית C</td></tr>
+      <tr><td>תיכון = גובה = חוצה זווית</td><td style="color:var(--accent3)">AM &#x22A5; BC, BM=MC, זווית BAM = זווית CAM</td></tr>
+      <tr><td>ציר סימטריה</td><td style="color:var(--accent)">הקו AM</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <div class="card-title">&#x1F9EE; נוסחאות חישוב</div>
+    <div style="display:flex;flex-direction:column;gap:0.8rem;">
+      <div><span class="badge bo">היקף</span><br>
+        <span class="formula">P = 2a + b</span>
+        <span style="margin-right:1rem;color:var(--text-muted);font-size:0.85rem">a = שוק, b = בסיס</span>
+      </div>
+      <div><span class="badge bt">שטח</span><br>
+        <span class="formula">S = &frac12; &times; b &times; h</span>
+        <span style="margin-right:1rem;color:var(--text-muted);font-size:0.85rem">h = גובה לבסיס</span>
+      </div>
+      <div><span class="badge bt">גובה (פיתגורס)</span><br>
+        <span class="formula">h = &radic;(a&sup2; &#x2212; (b/2)&sup2;)</span>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">&#x1F680; שלבי פתרון מומלצים</div>
+    <ol class="slist">
+      <li>זהה את השוקיים והבסיס</li>
+      <li>סמן אילו נתונים קיימים (צלעות / זוויות)</li>
+      <li>השתמש בתכונת זוויות הבסיס השוות</li>
+      <li>השתמש בסכום זוויות = 180&deg;</li>
+      <li>לחישוב שטח &#x2014; מצא גובה (פיתגורס אם נדרש)</li>
+    </ol>
+  </div>
+</div>
+
+<!-- ========== CALC ========== -->
+<div id="calc" class="section">
+  <div class="hero"><h1 style="font-size:2.2rem">שאלות חישוב</h1><p>זוויות &#xB7; היקף &#xB7; שטח</p></div>
+  <div class="scorebar">
+    <span class="slabel">ניקוד:</span>
+    <span class="sval" id="sv">0</span>
+    <span class="slabel">/ <span id="st">0</span></span>
+  </div>
+
+  <!-- Q1 -->
+  <div class="quiz-card">
+    <div class="qtext"><span class="qnum">1</span> ב-משולש ABC שווה שוקיים, AB=AC. זווית הראש A שווה 50&deg;. מהן זוויות הבסיס?</div>
+    <div class="qsvg">
+      <svg width="210" height="165" viewBox="0 0 210 165">
+        <polygon points="105,15 18,148 192,148" fill="rgba(108,142,245,0.08)"/>
+        <line x1="105" y1="15" x2="18" y2="148" stroke="#6c8ef5" stroke-width="2.5"/>
+        <line x1="105" y1="15" x2="192" y2="148" stroke="#6c8ef5" stroke-width="2.5"/>
+        <line x1="18" y1="148" x2="192" y2="148" stroke="#f5a623" stroke-width="2.5"/>
+        <g transform="translate(62,82) rotate(-61)"><line x1="-5" y1="0" x2="5" y2="0" stroke="#6c8ef5" stroke-width="2"/><line x1="-2" y1="-4" x2="2" y2="-4" stroke="#6c8ef5" stroke-width="2"/></g>
+        <g transform="translate(148,82) rotate(61)"><line x1="-5" y1="0" x2="5" y2="0" stroke="#6c8ef5" stroke-width="2"/><line x1="-2" y1="-4" x2="2" y2="-4" stroke="#6c8ef5" stroke-width="2"/></g>
+        <path d="M 93,31 A 15,15 0 0,1 117,31" fill="none" stroke="#f5a623" stroke-width="2"/>
+        <text x="97" y="46" fill="#f5a623" font-family="Heebo" font-size="12" font-weight="700">50&deg;</text>
+        <path d="M 32.0,148.0 A 14,14 0 0,1 25.7,136.3" fill="none" stroke="#4ecdc4" stroke-width="2"/>
+        <path d="M 178.0,148.0 A 14,14 0 0,0 184.3,136.3" fill="none" stroke="#4ecdc4" stroke-width="2"/>
+        <text x="22" y="132" fill="#4ecdc4" font-family="Heebo" font-size="12">?&deg;</text>
+        <text x="167" y="132" fill="#4ecdc4" font-family="Heebo" font-size="12">?&deg;</text>
+        <text x="105" y="8" text-anchor="middle" fill="#e8eaf0" font-family="Heebo" font-size="13" font-weight="700">A</text>
+        <text x="5" y="160" fill="#e8eaf0" font-family="Heebo" font-size="13" font-weight="700">B</text>
+        <text x="195" y="160" fill="#e8eaf0" font-family="Heebo" font-size="13" font-weight="700">C</text>
+      </svg>
+    </div>
+    <div class="arow"><label>זווית B = זווית C =</label><input class="ainput" id="q1" type="number" placeholder="&deg;"><button class="cbtn" onclick="chk('q1',65,'f1','(180&minus;50)&divide;2 = 65&deg;')">בדוק</button></div>
+    <div id="f1" class="fb"></div>
+  </div>
+
+  <!-- Q2 -->
+  <div class="quiz-card">
+    <div class="qtext"><span class="qnum">2</span> ב-משולש ABC שווה שוקיים, זווית הבסיס B שווה 72&deg;. מהי זווית הראש A?</div>
+    <div class="qsvg">
+      <svg width="210" height="175" viewBox="0 0 210 175">
+        <polygon points="105,15 18,158 192,158" fill="rgba(108,142,245,0.08)"/>
+        <line x1="105" y1="15" x2="18" y2="158" stroke="#6c8ef5" stroke-width="2.5"/>
+        <line x1="105" y1="15" x2="192" y2="158" stroke="#6c8ef5" stroke-width="2.5"/>
+        <line x1="18" y1="158" x2="192" y2="158" stroke="#f5a623" stroke-width="2.5"/>
+        <g transform="translate(62,87) rotate(-61)"><line x1="-5" y1="0" x2="5" y2="0" stroke="#6c8ef5" stroke-width="2"/><line x1="-2" y1="-4" x2="2" y2="-4" stroke="#6c8ef5" stroke-width="2"/></g>
+        <g transform="translate(148,87) rotate(61)"><line x1="-5" y1="0" x2="5" y2="0" stroke="#6c8ef5" stroke-width="2"/><line x1="-2" y1="-4" x2="2" y2="-4" stroke="#6c8ef5" stroke-width="2"/></g>
+        <path d="M 34.0,158.0 A 16,16 0 0,1 26.3,144.3" fill="none" stroke="#4ecdc4" stroke-width="2"/>
+        <path d="M 176.0,158.0 A 16,16 0 0,0 183.7,144.3" fill="none" stroke="#4ecdc4" stroke-width="2"/>
+        <text x="20" y="140" fill="#4ecdc4" font-family="Heebo" font-size="12" font-weight="700">72&deg;</text>
+        <text x="164" y="140" fill="#4ecdc4" font-family="Heebo" font-size="12" font-weight="700">72&deg;</text>
+        <path d="M 93,31 A 15,15 0 0,1 117,31" fill="none" stroke="#f5a623" stroke-width="2"/>
+        <text x="97" y="48" fill="#f5a623" font-family="Heebo" font-size="12">?&deg;</text>
+        <text x="105" y="8" text-anchor="middle" fill="#e8eaf0" font-family="Heebo" font-size="13" font-weight="700">A</text>
+        <text x="5" y="170" fill="#e8eaf0" font-family="Heebo" font-size="13" font-weight="700">B</text>
+        <text x="195" y="170" fill="#e8eaf0" font-family="Heebo" font-size="13" font-weight="700">C</text>
+      </svg>
+    </div>
+    <div class="arow"><label>זווית A =</label><input class="ainput" id="q2" type="number" placeholder="&deg;"><button class="cbtn" onclick="chk('q2',36,'f2','180&minus;2&times;72=36&deg;')">בדוק</button></div>
+    <div id="f2" class="fb"></div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="quiz-card">
+    <div class="qtext"><span class="qnum">3</span> ב-משולש ABC שווה שוקיים, AB=AC=10 ס&quot;מ, בסיס BC=8 ס&quot;מ. מהו ההיקף?</div>
+    <div class="qsvg">
+      <svg width="210" height="165" viewBox="0 0 210 165">
+        <polygon points="105,15 18,148 192,148" fill="rgba(108,142,245,0.08)"/>
+        <line x1="105" y1="15" x2="18" y2="148" stroke="#6c8ef5" stroke-width="2.5"/>
+        <line x1="105" y1="15" x2="192" y2="148" stroke="#6c8ef5" stroke-width="2.5"/>
+        <line x1="18" y1="148" x2="192" y2="148" stroke="#f5a623" stroke-width="2.5"/>
+        <g transform="translate(62,82) rotate(-61)"><line x1="-5" y1="0" x2="5" y2="0" stroke="#6c8ef5" stroke-width="2"/><line x1="-2" y1="-4" x2="2" y2="-4" stroke="#6c8ef5" stroke-width="2"/></g>
+        <g transform="translate(148,82) rotate(61)"><line x1="-5" y1="0" x2="5" y2="0" stroke="#6c8ef5" stroke-width="2"/><line x1="-2" y1="-4" x2="2" y2="-4" stroke="#6c8ef5" stroke-width="2"/></g>
+        <text x="48" y="82" fill="#6c8ef5" font-family="Heebo" font-size="13" font-weight="600">10</text>
+        <text x="152" y="82" fill="#6c8ef5" font-family="Heebo" font-size="13" font-weight="600">10</text>
+        <text x="105" y="162" text-anchor="middle" fill="#f5a623" font-family="Heebo" font-size="13" font-weight="600">8</text>
+        <text x="105" y="8" text-anchor="middle" fill="#e8eaf0" font-family="Heebo" font-size="13" font-weight="700">A</text>
+        <text x="5" y="160" fill="#e8eaf0" font-family="Heebo" font-size="13" font-weight="700">B</text>
+        <text x="195" y="160" fill="#e8eaf0" font-family="Heebo" font-size="13" font-weight="700">C</text>
+      </svg>
+    </div>
+    <div class="arow"><label>היקף =</label><input class="ainput" id="q3" type="number" placeholder="ס&quot;מ"><button class="cbtn" onclick="chk('q3',28,'f3','2&times;10+8=28 ס&quot;מ')">בדוק</button></div>
+    <div id="f3" class="fb"></div>
+  </div>
+
+  <!-- Q4 -->
+  <div class="quiz-card">
+    <div class="qtext"><span class="qnum">4</span> ב-משולש ABC שווה שוקיים, AB=AC=13, בסיס BC=10. מהו הגובה AM לבסיס?</div>
+    <div class="highlight" style="margin-bottom:0.8rem">&#x1F4A1; <strong>רמז:</strong> M אמצע BC, לכן BM=5. פיתגורס: AM&sup2; + 5&sup2; = 13&sup2;</div>
+    <div class="qsvg">
+      <svg width="260" height="178" viewBox="0 0 260 178">
+        <polygon points="130,14 20,158 240,158" fill="rgba(108,142,245,0.08)"/>
+        <line x1="130" y1="14" x2="20" y2="158" stroke="#6c8ef5" stroke-width="2.5"/>
+        <line x1="130" y1="14" x2="240" y2="158" stroke="#6c8ef5" stroke-width="2.5"/>
+        <line x1="20" y1="158" x2="240" y2="158" stroke="#f5a623" stroke-width="2.5"/>
+        <line x1="130" y1="14" x2="130" y2="158" stroke="#4ecdc4" stroke-width="2" stroke-dasharray="5,3"/>
+        <rect x="118" y="146" width="12" height="12" fill="none" stroke="#4ecdc4" stroke-width="1.8"/>
+        <circle cx="130" cy="158" r="3.5" fill="#4ecdc4"/>
+        <text x="53" y="86" fill="#6c8ef5" font-family="Heebo" font-size="14" font-weight="600">13</text>
+        <text x="190" y="86" fill="#6c8ef5" font-family="Heebo" font-size="14" font-weight="600">13</text>
+        <text x="73" y="172" text-anchor="middle" fill="#f5a623" font-family="Heebo" font-size="13" font-weight="600">5</text>
+        <text x="187" y="172" text-anchor="middle" fill="#f5a623" font-family="Heebo" font-size="13" font-weight="600">5</text>
+        <text x="142" y="88" fill="#4ecdc4" font-family="Heebo" font-size="13" font-weight="600">h=?</text>
+        <text x="130" y="7" text-anchor="middle" fill="#e8eaf0" font-family="Heebo" font-size="13" font-weight="700">A</text>
+        <text x="7" y="170" fill="#e8eaf0" font-family="Heebo" font-size="13" font-weight="700">B</text>
+        <text x="243" y="170" fill="#e8eaf0" font-family="Heebo" font-size="13" font-weight="700">C</text>
+        <text x="130" y="174" text-anchor="middle" fill="#4ecdc4" font-family="Heebo" font-size="12">M</text>
+      </svg>
+    </div>
+    <div class="arow"><label>h = AM =</label><input class="ainput" id="q4" type="number" placeholder="ס&quot;מ"><button class="cbtn" onclick="chk('q4',12,'f4','AM&sup2;=13&sup2;&minus;5&sup2;=169&minus;25=144, AM=12')">בדוק</button></div>
+    <div id="f4" class="fb"></div>
+  </div>
+
+  <!-- Q5 -->
+  <div class="quiz-card">
+    <div class="qtext"><span class="qnum">5</span> ב-משולש ABC שווה שוקיים, שוק=13, בסיס=10 (מש&#x2019; 4, h=12). מהו השטח?</div>
+    <div class="qsvg">
+      <svg width="260" height="178" viewBox="0 0 260 178">
+        <polygon points="130,14 20,158 240,158" fill="rgba(108,142,245,0.14)"/>
+        <line x1="130" y1="14" x2="20" y2="158" stroke="#6c8ef5" stroke-width="2.5"/>
+        <line x1="130" y1="14" x2="240" y2="158" stroke="#6c8ef5" stroke-width="2.5"/>
+        <line x1="20" y1="158" x2="240" y2="158" stroke="#f5a623" stroke-width="2.5"/>
+        <line x1="130" y1="14" x2="130" y2="158" stroke="#4ecdc4" stroke-width="2" stroke-dasharray="5,3"/>
+        <rect x="118" y="146" width="12" height="12" fill="none" stroke="#4ecdc4" stroke-width="1.8"/>
+        <text x="142" y="88" fill="#4ecdc4" font-family="Heebo" font-size="13" font-weight="600">h=12</text>
+        <text x="130" y="172" text-anchor="middle" fill="#f5a623" font-family="Heebo" font-size="13" font-weight="600">b=10</text>
+        <text x="85" y="108" fill="rgba(78,205,196,0.5)" font-family="Heebo" font-size="13">S=?</text>
+        <text x="130" y="7" text-anchor="middle" fill="#e8eaf0" font-family="Heebo" font-size="13" font-weight="700">A</text>
+        <text x="7" y="170" fill="#e8eaf0" font-family="Heebo" font-size="13" font-weight="700">B</text>
+        <text x="243" y="170" fill="#e8eaf0" font-family="Heebo" font-size="13" font-weight="700">C</text>
+      </svg>
+    </div>
+    <div class="arow"><label>שטח =</label><input class="ainput" id="q5" type="number" placeholder="ס&quot;מ&sup2;"><button class="cbtn" onclick="chk('q5',60,'f5','&frac12;&times;10&times;12=60 ס&quot;מ&sup2;')">בדוק</button></div>
+    <div id="f5" class="fb"></div>
+  </div>
+
+  <!-- Q6 -->
+  <div class="quiz-card">
+    <div class="qtext"><span class="qnum">6</span> ב-משולש ABC שווה שוקיים, בסיס BC=12 ס&quot;מ, גובה AM=8 ס&quot;מ. מהו שטח המשולש?</div>
+    <div class="qsvg">
+      <svg width="240" height="165" viewBox="0 0 240 165">
+        <polygon points="120,14 20,150 220,150" fill="rgba(108,142,245,0.14)"/>
+        <line x1="120" y1="14" x2="20" y2="150" stroke="#6c8ef5" stroke-width="2.5"/>
+        <line x1="120" y1="14" x2="220" y2="150" stroke="#6c8ef5" stroke-width="2.5"/>
+        <line x1="20" y1="150" x2="220" y2="150" stroke="#f5a623" stroke-width="2.5"/>
+        <line x1="120" y1="14" x2="120" y2="150" stroke="#4ecdc4" stroke-width="2" stroke-dasharray="5,3"/>
+        <rect x="108" y="138" width="12" height="12" fill="none" stroke="#4ecdc4" stroke-width="1.8"/>
+        <text x="132" y="84" fill="#4ecdc4" font-family="Heebo" font-size="13" font-weight="600">h=8</text>
+        <text x="120" y="163" text-anchor="middle" fill="#f5a623" font-family="Heebo" font-size="13" font-weight="600">b=12</text>
+        <text x="120" y="7" text-anchor="middle" fill="#e8eaf0" font-family="Heebo" font-size="13" font-weight="700">A</text>
+        <text x="7" y="162" fill="#e8eaf0" font-family="Heebo" font-size="13" font-weight="700">B</text>
+        <text x="222" y="162" fill="#e8eaf0" font-family="Heebo" font-size="13" font-weight="700">C</text>
+      </svg>
+    </div>
+    <div class="arow"><label>שטח =</label><input class="ainput" id="q6" type="number" placeholder="ס&quot;מ&sup2;"><button class="cbtn" onclick="chk('q6',48,'f6','&frac12;&times;12&times;8=48 ס&quot;מ&sup2;')">בדוק</button></div>
+    <div id="f6" class="fb"></div>
+  </div>
+
+  <!-- Q7 -->
+  <div class="quiz-card">
+    <div class="qtext"><span class="qnum">7</span> &#x2605; ב-משולש ABC שווה שוקיים, AB=AC=10, זווית הבסיס B שווה 60&deg;. מהו שטח המשולש?</div>
+    <div class="highlight orange">&#x1F4A1; <strong>רמז:</strong> חשב את זווית A. מה סוג המשולש?</div>
+    <div class="qsvg">
+      <svg width="210" height="180" viewBox="0 0 210 180">
+        <polygon points="105,15 18,160 192,160" fill="rgba(108,142,245,0.08)"/>
+        <line x1="105" y1="15" x2="18" y2="160" stroke="#6c8ef5" stroke-width="2.5"/>
+        <line x1="105" y1="15" x2="192" y2="160" stroke="#6c8ef5" stroke-width="2.5"/>
+        <line x1="18" y1="160" x2="192" y2="160" stroke="#f5a623" stroke-width="2.5"/>
+        <g transform="translate(62,88) rotate(-61)"><line x1="-5" y1="0" x2="5" y2="0" stroke="#6c8ef5" stroke-width="2"/><line x1="-2" y1="-4" x2="2" y2="-4" stroke="#6c8ef5" stroke-width="2"/></g>
+        <g transform="translate(148,88) rotate(61)"><line x1="-5" y1="0" x2="5" y2="0" stroke="#6c8ef5" stroke-width="2"/><line x1="-2" y1="-4" x2="2" y2="-4" stroke="#6c8ef5" stroke-width="2"/></g>
+        <text x="47" y="88" fill="#6c8ef5" font-family="Heebo" font-size="13" font-weight="600">10</text>
+        <text x="153" y="88" fill="#6c8ef5" font-family="Heebo" font-size="13" font-weight="600">10</text>
+        <path d="M 34.0,160.0 A 16,16 0 0,1 26.2,146.3" fill="none" stroke="#4ecdc4" stroke-width="2"/>
+        <path d="M 176.0,160.0 A 16,16 0 0,0 183.8,146.3" fill="none" stroke="#4ecdc4" stroke-width="2"/>
+        <text x="20" y="143" fill="#4ecdc4" font-family="Heebo" font-size="12" font-weight="700">60&deg;</text>
+        <text x="163" y="143" fill="#4ecdc4" font-family="Heebo" font-size="12" font-weight="700">60&deg;</text>
+        <text x="105" y="8" text-anchor="middle" fill="#e8eaf0" font-family="Heebo" font-size="13" font-weight="700">A</text>
+        <text x="5" y="172" fill="#e8eaf0" font-family="Heebo" font-size="13" font-weight="700">B</text>
+        <text x="195" y="172" fill="#e8eaf0" font-family="Heebo" font-size="13" font-weight="700">C</text>
+      </svg>
+    </div>
+    <div class="arow"><label>שטח &asymp;</label><input class="ainput" id="q7" type="number" placeholder="ס&quot;מ&sup2;" step="0.1"><button class="cbtn" onclick="chkA('q7',43.3,1,'f7','זו&#x2019; A=60&deg; &rarr; שווה צלעות! h=10&times;sin60&deg;&asymp;8.66, S=&frac12;&times;10&times;8.66&asymp;43.3')">בדוק</button></div>
+    <div id="f7" class="fb"></div>
+  </div>
+
+  <!-- Q8 NEW -->
+  <div class="quiz-card">
+    <div class="qtext"><span class="qnum">8</span> ב-משולש ABC שווה שוקיים, זווית הראש A שווה 100&deg;. מהי כל זווית בסיס? האם המשולש חד-זווית, ישר-זווית, או קהה-זווית?</div>
+    <div class="qsvg">
+      <svg width="250" height="155" viewBox="0 0 250 155">
+        <!-- obtuse apex: wider base -->
+        <polygon points="125,20 25,140 225,140" fill="rgba(245,166,35,0.07)"/>
+        <line x1="125" y1="20" x2="25" y2="140" stroke="#6c8ef5" stroke-width="2.5"/>
+        <line x1="125" y1="20" x2="225" y2="140" stroke="#6c8ef5" stroke-width="2.5"/>
+        <line x1="25" y1="140" x2="225" y2="140" stroke="#f5a623" stroke-width="2.5"/>
+        <g transform="translate(75,80) rotate(-52)"><line x1="-5" y1="0" x2="5" y2="0" stroke="#6c8ef5" stroke-width="2"/><line x1="-2" y1="-4" x2="2" y2="-4" stroke="#6c8ef5" stroke-width="2"/></g>
+        <g transform="translate(175,80) rotate(52)"><line x1="-5" y1="0" x2="5" y2="0" stroke="#6c8ef5" stroke-width="2"/><line x1="-2" y1="-4" x2="2" y2="-4" stroke="#6c8ef5" stroke-width="2"/></g>
+        <!-- wide apex arc -->
+        <path d="M 107,36 A 20,20 0 0,1 143,36" fill="none" stroke="#f5a623" stroke-width="2"/>
+        <text x="112" y="52" fill="#f5a623" font-family="Heebo" font-size="12" font-weight="700">100&deg;</text>
+        <path d="M 40.0,140.0 A 15,15 0 0,1 34.6,128.5" fill="none" stroke="#4ecdc4" stroke-width="2"/>
+        <path d="M 210.0,140.0 A 15,15 0 0,0 215.4,128.5" fill="none" stroke="#4ecdc4" stroke-width="2"/>
+        <text x="27" y="125" fill="#4ecdc4" font-family="Heebo" font-size="12">?&deg;</text>
+        <text x="197" y="125" fill="#4ecdc4" font-family="Heebo" font-size="12">?&deg;</text>
+        <text x="125" y="12" text-anchor="middle" fill="#e8eaf0" font-family="Heebo" font-size="13" font-weight="700">A</text>
+        <text x="12" y="152" fill="#e8eaf0" font-family="Heebo" font-size="13" font-weight="700">B</text>
+        <text x="228" y="152" fill="#e8eaf0" font-family="Heebo" font-size="13" font-weight="700">C</text>
+      </svg>
+    </div>
+    <div class="arow"><label>זווית B = זווית C =</label><input class="ainput" id="q8" type="number" placeholder="&deg;"><button class="cbtn" onclick="chk('q8',40,'f8','(180&minus;100)&divide;2=40&deg;. קהה-זווית כי זו&#x2019; A&gt;90&deg;')">בדוק</button></div>
+    <div id="f8" class="fb"></div>
+  </div>
+
+  <!-- Q9 NEW - multi-part -->
+  <div class="quiz-card">
+    <div class="qtext"><span class="qnum">9</span> ב-משולש ABC שווה שוקיים, AB=AC=17 ס&quot;מ, בסיס BC=16 ס&quot;מ. חשב: (א) גובה לבסיס (ב) שטח (ג) היקף.</div>
+    <div class="qsvg">
+      <svg width="270" height="178" viewBox="0 0 270 178">
+        <polygon points="135,14 20,158 250,158" fill="rgba(108,142,245,0.09)"/>
+        <line x1="135" y1="14" x2="20" y2="158" stroke="#6c8ef5" stroke-width="2.5"/>
+        <line x1="135" y1="14" x2="250" y2="158" stroke="#6c8ef5" stroke-width="2.5"/>
+        <line x1="20" y1="158" x2="250" y2="158" stroke="#f5a623" stroke-width="2.5"/>
+        <line x1="135" y1="14" x2="135" y2="158" stroke="#4ecdc4" stroke-width="2" stroke-dasharray="5,3"/>
+        <rect x="123" y="146" width="12" height="12" fill="none" stroke="#4ecdc4" stroke-width="1.8"/>
+        <circle cx="135" cy="158" r="3" fill="#4ecdc4"/>
+        <g transform="translate(77,86) rotate(-60)"><line x1="-5" y1="0" x2="5" y2="0" stroke="#6c8ef5" stroke-width="2"/><line x1="-2" y1="-4" x2="2" y2="-4" stroke="#6c8ef5" stroke-width="2"/></g>
+        <g transform="translate(193,86) rotate(60)"><line x1="-5" y1="0" x2="5" y2="0" stroke="#6c8ef5" stroke-width="2"/><line x1="-2" y1="-4" x2="2" y2="-4" stroke="#6c8ef5" stroke-width="2"/></g>
+        <text x="56" y="84" fill="#6c8ef5" font-family="Heebo" font-size="14" font-weight="600">17</text>
+        <text x="198" y="84" fill="#6c8ef5" font-family="Heebo" font-size="14" font-weight="600">17</text>
+        <text x="75" y="172" text-anchor="middle" fill="#f5a623" font-family="Heebo" font-size="13" font-weight="600">8</text>
+        <text x="195" y="172" text-anchor="middle" fill="#f5a623" font-family="Heebo" font-size="13" font-weight="600">8</text>
+        <text x="147" y="88" fill="#4ecdc4" font-family="Heebo" font-size="13" font-weight="600">h=?</text>
+        <text x="135" y="7" text-anchor="middle" fill="#e8eaf0" font-family="Heebo" font-size="13" font-weight="700">A</text>
+        <text x="7" y="170" fill="#e8eaf0" font-family="Heebo" font-size="13" font-weight="700">B</text>
+        <text x="253" y="170" fill="#e8eaf0" font-family="Heebo" font-size="13" font-weight="700">C</text>
+        <text x="135" y="173" text-anchor="middle" fill="#4ecdc4" font-family="Heebo" font-size="12">M</text>
+      </svg>
+    </div>
+    <p style="font-size:0.9rem;color:var(--text-muted);margin-bottom:0.5rem">(א) גובה לבסיס:</p>
+    <div class="arow"><label>h =</label><input class="ainput" id="q9a" type="number" placeholder="ס&quot;מ"><button class="cbtn" onclick="chk('q9a',15,'f9a','h&sup2;=17&sup2;&minus;8&sup2;=289&minus;64=225, h=15')">בדוק</button></div>
+    <div id="f9a" class="fb"></div>
+    <p style="font-size:0.9rem;color:var(--text-muted);margin-bottom:0.5rem;margin-top:0.8rem">(ב) שטח:</p>
+    <div class="arow"><label>שטח =</label><input class="ainput" id="q9b" type="number" placeholder="ס&quot;מ&sup2;"><button class="cbtn" onclick="chk('q9b',120,'f9b','&frac12;&times;16&times;15=120 ס&quot;מ&sup2;')">בדוק</button></div>
+    <div id="f9b" class="fb"></div>
+    <p style="font-size:0.9rem;color:var(--text-muted);margin-bottom:0.5rem;margin-top:0.8rem">(ג) היקף:</p>
+    <div class="arow"><label>היקף =</label><input class="ainput" id="q9c" type="number" placeholder="ס&quot;מ"><button class="cbtn" onclick="chk('q9c',50,'f9c','2&times;17+16=50 ס&quot;מ')">בדוק</button></div>
+    <div id="f9c" class="fb"></div>
+  </div>
+
+  <!-- Q10 NEW - reverse -->
+  <div class="quiz-card">
+    <div class="qtext"><span class="qnum">10</span> &#x2605;&#x2605; ב-משולש ABC שווה שוקיים, שטח המשולש = 96 ס&quot;מ&sup2;, בסיס BC=12 ס&quot;מ. מצא: (א) גובה לבסיס, (ב) אורך השוק.</div>
+    <div class="qsvg">
+      <svg width="240" height="168" viewBox="0 0 240 168">
+        <polygon points="120,14 20,152 220,152" fill="rgba(78,205,196,0.08)"/>
+        <line x1="120" y1="14" x2="20" y2="152" stroke="#6c8ef5" stroke-width="2.5"/>
+        <line x1="120" y1="14" x2="220" y2="152" stroke="#6c8ef5" stroke-width="2.5"/>
+        <line x1="20" y1="152" x2="220" y2="152" stroke="#f5a623" stroke-width="2.5"/>
+        <line x1="120" y1="14" x2="120" y2="152" stroke="#4ecdc4" stroke-width="2" stroke-dasharray="5,3"/>
+        <rect x="108" y="140" width="12" height="12" fill="none" stroke="#4ecdc4" stroke-width="1.8"/>
+        <text x="132" y="82" fill="#4ecdc4" font-family="Heebo" font-size="13" font-weight="600">h=?</text>
+        <text x="120" y="165" text-anchor="middle" fill="#f5a623" font-family="Heebo" font-size="13" font-weight="600">b=12</text>
+        <text x="80" y="105" fill="rgba(78,205,196,0.55)" font-family="Heebo" font-size="14">S=96</text>
+        <text x="120" y="7" text-anchor="middle" fill="#e8eaf0" font-family="Heebo" font-size="13" font-weight="700">A</text>
+        <text x="7" y="164" fill="#e8eaf0" font-family="Heebo" font-size="13" font-weight="700">B</text>
+        <text x="223" y="164" fill="#e8eaf0" font-family="Heebo" font-size="13" font-weight="700">C</text>
+      </svg>
+    </div>
+    <p style="font-size:0.9rem;color:var(--text-muted);margin-bottom:0.5rem">(א) גובה לבסיס:</p>
+    <div class="arow"><label>h =</label><input class="ainput" id="q10a" type="number" placeholder="ס&quot;מ"><button class="cbtn" onclick="chk('q10a',16,'f10a','96=&frac12;&times;12&times;h &rarr; h=16 ס&quot;מ')">בדוק</button></div>
+    <div id="f10a" class="fb"></div>
+    <p style="font-size:0.9rem;color:var(--text-muted);margin-bottom:0.5rem;margin-top:0.8rem">(ב) אורך השוק:</p>
+    <div class="highlight orange" style="margin-bottom:0.6rem">&#x1F4A1; <strong>רמז:</strong> a&sup2; = h&sup2; + (b/2)&sup2; = 16&sup2; + 6&sup2;</div>
+    <div class="arow"><label>a =</label><input class="ainput" id="q10b" type="number" placeholder="ס&quot;מ" step="0.1"><button class="cbtn" onclick="chkA('q10b',17.09,0.1,'f10b','a=&radic;(256+36)=&radic;292&asymp;17.09 ס&quot;מ')">בדוק</button></div>
+    <div id="f10b" class="fb"></div>
+  </div>
+</div>
+
+<!-- ========== PROOF ========== -->
+<div id="proof" class="section">
+  <div class="hero"><h1 style="font-size:2.2rem">שאלות הוכחה</h1><p>הוכח את תכונות המשולש שווה שוקיים</p></div>
+
+  <!-- PROOF 1 -->
+  <div class="quiz-card">
+    <div class="qtext"><span class="qnum">1</span> הוכח: ב-משולש ABC שווה שוקיים (AB=AC), זוויות הבסיס שוות: זווית B = זווית C</div>
+    <div class="qsvg">
+      <svg width="270" height="195" viewBox="0 0 270 195">
+        <polygon points="135,20 28,172 242,172" fill="rgba(108,142,245,0.07)"/>
+        <line x1="135" y1="20" x2="28" y2="172" stroke="#6c8ef5" stroke-width="2.5"/>
+        <line x1="135" y1="20" x2="242" y2="172" stroke="#6c8ef5" stroke-width="2.5"/>
+        <line x1="28" y1="172" x2="242" y2="172" stroke="#f5a623" stroke-width="2.5"/>
+        <!-- AM bisector dashed -->
+        <line x1="135" y1="20" x2="135" y2="172" stroke="#4ecdc4" stroke-width="2" stroke-dasharray="6,3"/>
+        <circle cx="135" cy="172" r="3.5" fill="#4ecdc4"/>
+        <!-- leg ticks -->
+        <g transform="translate(81,96) rotate(-57)"><line x1="-6" y1="0" x2="6" y2="0" stroke="#6c8ef5" stroke-width="2.2"/><line x1="-3" y1="-5" x2="3" y2="-5" stroke="#6c8ef5" stroke-width="2.2"/></g>
+        <g transform="translate(189,96) rotate(57)"><line x1="-6" y1="0" x2="6" y2="0" stroke="#6c8ef5" stroke-width="2.2"/><line x1="-3" y1="-5" x2="3" y2="-5" stroke="#6c8ef5" stroke-width="2.2"/></g>
+        <!-- bisector arcs at A -->
+        <path d="M 121,37 A 17,17 0 0,1 135,44" fill="none" stroke="#f5a623" stroke-width="1.8"/>
+        <path d="M 135,44 A 17,17 0 0,1 149,37" fill="none" stroke="#f5a623" stroke-width="1.8"/>
+        <!-- base angle arcs -->
+        <path d="M 45.0,172.0 A 17,17 0 0,1 37.8,158.1" fill="none" stroke="#4ecdc4" stroke-width="2"/>
+        <path d="M 225.0,172.0 A 17,17 0 0,0 232.2,158.1" fill="none" stroke="#4ecdc4" stroke-width="2"/>
+        <text x="135" y="12" text-anchor="middle" fill="#e8eaf0" font-family="Heebo" font-size="14" font-weight="700">A</text>
+        <text x="14" y="185" fill="#e8eaf0" font-family="Heebo" font-size="14" font-weight="700">B</text>
+        <text x="245" y="185" fill="#e8eaf0" font-family="Heebo" font-size="14" font-weight="700">C</text>
+        <text x="135" y="186" text-anchor="middle" fill="#4ecdc4" font-family="Heebo" font-size="13" font-weight="700">M</text>
+        <text x="148" y="100" fill="#4ecdc4" font-family="Heebo" font-size="12">AM</text>
+        <text x="52.9" y="159.1" fill="#4ecdc4" font-family="Heebo" font-size="11">זו&#x2019; B = ?</text>
+        <text x="217.1" y="159.1" fill="#4ecdc4" font-family="Heebo" font-size="11">זו&#x2019; C = ?</text>
+      </svg>
+    </div>
+    <div class="highlight" style="margin-bottom:1rem"><strong>שיטה:</strong> נמתח AM &#x2014; חוצה זווית A אל M על BC. נוכיח משולש ABM &#x2245; משולש ACM</div>
+    <div class="pstep"><div class="pnum">1</div><div class="pcont">AM מחצה את זווית A, לכן: זווית BAM = זווית CAM (הגדרת חוצה זווית)</div></div>
+    <div class="pstep"><div class="pnum">2</div><div class="pcont">AB = AC (נתון &#x2014; שוקיים שוות)</div></div>
+    <div class="pstep"><div class="pnum">3</div><div class="pcont">AM = AM (צלע משותפת)</div></div>
+    <div class="pstep"><div class="pnum">4</div><div class="pcont">
+      משולש ABM &#x2245; משולש ACM לפי: <input class="pfill" id="pf1" placeholder="סיבת קונגרואנטיות" autocomplete="off">
+      <button class="cbtn" style="margin-right:0.5rem;margin-top:0.3rem" onclick="chkP('pf1',['צלע-זווית-צלע','צ.ז.צ','czc','צ ז צ','צזצ'],'pf1b')">בדוק</button>
+      <div id="pf1b" class="fb" style="margin-top:0.4rem"></div>
+    </div></div>
+    <div class="pstep"><div class="pnum">5</div><div class="pcont">
+      מהתלכדות: זווית ABM = זווית ACM, כלומר: <input class="pfill" id="pf2" placeholder="מה שווה למה?" autocomplete="off">
+      <button class="cbtn" style="margin-right:0.5rem;margin-top:0.3rem" onclick="chkP('pf2',['זווית b = זווית c','זווית B = זווית C','b=c','שתי זוויות הבסיס שוות'],'pf2b')">בדוק</button>
+      <div id="pf2b" class="fb" style="margin-top:0.4rem"></div>
+    </div></div>
+  </div>
+
+  <!-- PROOF 2 -->
+  <div class="quiz-card">
+    <div class="qtext"><span class="qnum">2</span> &#x2605; הוכח: ב-משולש ABC שווה שוקיים (AB=AC), התיכון לבסיס הוא גם גובה לבסיס.</div>
+    <p style="color:var(--text-muted);font-size:0.9rem;margin-bottom:0.8rem">M הוא אמצע BC. צריך להוכיח ש-AM &#x22A5; BC.</p>
+    <div class="qsvg">
+      <svg width="270" height="195" viewBox="0 0 270 195">
+        <polygon points="135,20 28,172 242,172" fill="rgba(108,142,245,0.07)"/>
+        <line x1="135" y1="20" x2="28" y2="172" stroke="#6c8ef5" stroke-width="2.5"/>
+        <line x1="135" y1="20" x2="242" y2="172" stroke="#6c8ef5" stroke-width="2.5"/>
+        <line x1="28" y1="172" x2="242" y2="172" stroke="#f5a623" stroke-width="2.5"/>
+        <line x1="135" y1="20" x2="135" y2="172" stroke="#4ecdc4" stroke-width="2.5" stroke-dasharray="6,3"/>
+        <rect x="123" y="160" width="12" height="12" fill="none" stroke="#4ecdc4" stroke-width="2"/>
+        <circle cx="135" cy="172" r="4" fill="#4ecdc4"/>
+        <g transform="translate(81,96) rotate(-57)"><line x1="-6" y1="0" x2="6" y2="0" stroke="#6c8ef5" stroke-width="2.2"/><line x1="-3" y1="-5" x2="3" y2="-5" stroke="#6c8ef5" stroke-width="2.2"/></g>
+        <g transform="translate(189,96) rotate(57)"><line x1="-6" y1="0" x2="6" y2="0" stroke="#6c8ef5" stroke-width="2.2"/><line x1="-3" y1="-5" x2="3" y2="-5" stroke="#6c8ef5" stroke-width="2.2"/></g>
+        <!-- midpoint ticks -->
+        <line x1="81" y1="172" x2="81" y2="165" stroke="#f5a623" stroke-width="2.5"/>
+        <line x1="189" y1="172" x2="189" y2="165" stroke="#f5a623" stroke-width="2.5"/>
+        <text x="135" y="12" text-anchor="middle" fill="#e8eaf0" font-family="Heebo" font-size="14" font-weight="700">A</text>
+        <text x="14" y="185" fill="#e8eaf0" font-family="Heebo" font-size="14" font-weight="700">B</text>
+        <text x="245" y="185" fill="#e8eaf0" font-family="Heebo" font-size="14" font-weight="700">C</text>
+        <text x="135" y="188" text-anchor="middle" fill="#4ecdc4" font-family="Heebo" font-size="13" font-weight="700">M</text>
+        <text x="148" y="95" fill="#4ecdc4" font-family="Heebo" font-size="12">AM&#x22A5;BC</text>
+        <text x="78" y="162" text-anchor="middle" fill="#f5a623" font-family="Heebo" font-size="11">BM</text>
+        <text x="192" y="162" text-anchor="middle" fill="#f5a623" font-family="Heebo" font-size="11">MC</text>
+      </svg>
+    </div>
+    <div class="pstep"><div class="pnum">1</div><div class="pcont">AB=AC (נתון), BM=MC (נתון &#x2014; M אמצע BC)</div></div>
+    <div class="pstep"><div class="pnum">2</div><div class="pcont">AM = AM (צלע משותפת)</div></div>
+    <div class="pstep"><div class="pnum">3</div><div class="pcont">
+      משולש ABM &#x2245; משולש ACM לפי: <input class="pfill" id="pf3" placeholder="סיבת קונגרואנטיות" autocomplete="off">
+      <button class="cbtn" style="margin-right:0.5rem;margin-top:0.3rem" onclick="chkP('pf3',['צלע-צלע-צלע','צ.צ.צ','zzz','צצצ','צ צ צ'],'pf3b')">בדוק</button>
+      <div id="pf3b" class="fb" style="margin-top:0.4rem"></div>
+    </div></div>
+    <div class="pstep"><div class="pnum">4</div><div class="pcont">מהתלכדות: זווית AMB = זווית AMC</div></div>
+    <div class="pstep"><div class="pnum">5</div><div class="pcont">
+      180&deg; = זווית AMC + זווית AMB (זוויות על קו ישר), לכן זווית AMB = <input class="pfill" id="pf4" placeholder="כמה מעלות?" style="width:80px" autocomplete="off">&deg;
+      <button class="cbtn" style="margin-right:0.5rem;margin-top:0.3rem" onclick="chkP('pf4',['90','90°'],'pf4b')">בדוק</button>
+      <div id="pf4b" class="fb" style="margin-top:0.4rem"></div>
+    </div></div>
+    <div class="pstep"><div class="pnum">6</div><div class="pcont" style="color:var(--success)">לכן AM &#x22A5; BC &#x2014; התיכון הוא גם גובה! &#x25A0;</div></div>
+  </div>
+
+</div>
+
+<script>
+let score=0,checked=new Set();
+
+function go(id){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const map={learn:0,summary:1,calc:2,proof:3};
+  document.querySelectorAll('.nav-tab')[map[id]].classList.add('active');
+}
+
+function chk(id,ans,fb,exp){
+  const i=document.getElementById(id),f=document.getElementById(fb);
+  const v=parseFloat(i.value);
+  if(isNaN(v)){f.className='fb show no';f.textContent='נא להזין מספר.';return;}
+  if(Math.abs(v-ans)<0.6){
+    i.className='ainput ok';f.className='fb show ok';f.innerHTML='נכון! '+exp;
+    if(!checked.has(id)){score++;checked.add(id);upScore();}
+  }else{
+    i.className='ainput no';f.className='fb show no';f.innerHTML='לא מדויק. רמז: '+exp;
+  }
+}
+
+function chkA(id,ans,tol,fb,exp){
+  const i=document.getElementById(id),f=document.getElementById(fb);
+  const v=parseFloat(i.value);
+  if(isNaN(v)){f.className='fb show no';f.textContent='נא להזין מספר.';return;}
+  if(Math.abs(v-ans)<=tol){
+    i.className='ainput ok';f.className='fb show ok';f.innerHTML='נכון! '+exp;
+    if(!checked.has(id)){score++;checked.add(id);upScore();}
+  }else{
+    i.className='ainput no';f.className='fb show no';f.innerHTML='לא מדויק. רמז: '+exp;
+  }
+}
+
+function chkP(id,answers,fb){
+  const i=document.getElementById(id),f=document.getElementById(fb);
+  const v=i.value.trim().toLowerCase().replace(/\s/g,'');
+  const ok=answers.some(a=>v===a.toLowerCase().replace(/\s/g,'')||v.includes(a.toLowerCase().replace(/\s/g,''))||a.toLowerCase().replace(/\s/g,'').includes(v));
+  if(ok){
+    i.className='pfill ok';f.className='fb show ok';f.textContent='מצוין!';
+    if(!checked.has(id)){score++;checked.add(id);upScore();}
+  }else{
+    i.className='pfill no';f.className='fb show no';f.textContent='לא מדויק. תשובה: '+answers[0];
+  }
+}
+
+function showSol(){
+  const f=document.getElementById('pf5b');
+  f.className='fb show ok';
+  f.innerHTML='<strong>פתרון:</strong><br>1. נמתח AD גובה מ-A אל BC, D על BC.<br>'+
+    '2. זווית ADB = זווית ADC = 90&deg; (AD גובה)<br>'+
+    '3. זווית ABD = זווית ACD (נתון)<br>'+
+    '4. AD = AD (צלע משותפת)<br>'+
+    '5. משולש ABD &#x2245; משולש ACD לפי ז.ז.צ (זווית-זווית-צלע מול זווית)<br>'+
+    '6. מהתלכדות: AB = AC';
+}
+
+function upScore(){
+  document.getElementById('sv').textContent=score;
+}
+
+window.onload=()=>{
+  document.getElementById('st').textContent=12;
+};
+</script>
+</body>
+</html>
